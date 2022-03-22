@@ -18,13 +18,12 @@ const getFrequencyNumber = (arr) => {
   arrOfFrequency.sort((a, b) => b - a);
 
   const maxFrequency = arrOfFrequency[0];
-  const arrOfFrequencyNumbers = [];
   for (const key in obj) {
     if (obj[key] === maxFrequency) {
-      arrOfFrequencyNumbers.push(key);
+      return key;
     }
   }
-  return arrOfFrequencyNumbers;
+  //return arrOfFrequencyNumbers;
 };
 
 console.log(getFrequencyNumber(arr1));
@@ -56,8 +55,8 @@ const sortByGenders = (users) => {
     const userName = user.first_name;
     const userSurname = user.last_name;
 
-    user.fullName = `${userName}${userSurname}`;
     const { first_name, last_name, ...rest } = user;
+    rest.fullName = `${userName}${userSurname}`;
     const modifiedUser = rest;
 
     if (!result[userGender]) {
@@ -93,9 +92,7 @@ const videos = [
 ];
 
 const turnArrayIntoObj = (arr) => {
-  return arr.reduce((result, obj) => {
-    const id = obj.id;
-    const title = obj.title;
+  return arr.reduce((result, { id, title }) => {
     result[id] = title;
     return result;
   }, {});
@@ -140,18 +137,23 @@ const newReleases = [
 ];
 
 const getRelease = (arr) => {
-  return arr.map((release) => {
+  return arr.reduce((result, release) => {
     if (release.rating[0] === 5.0) {
-      return release.id;
+      result.push(release.id);
     }
-  });
+    return result;
+  }, []);
 };
-// почему undefiend?
+
 console.log(getRelease(newReleases));
 
 // 4 С помощью функций map, reduce, вывести url у которого самая большая площадь
-
 const boxarts = [
+  {
+    width: 3000,
+    height: 2000,
+    url: "http://cdn-0.nflximg.com/images/2891/Fracture300.jpg",
+  },
   {
     width: 200,
     height: 200,
@@ -173,25 +175,13 @@ const boxarts = [
     url: "http://cdn-0.nflximg.com/images/2891/Fracture425.jpg",
   },
 ];
-
 const getBiggestArea = (arr) => {
-  const arrOfAreas = arr.map((item) => {
-    return item.width * item.height;
-  });
-  const maxArea = arrOfAreas.sort((a, b) => b - a)[0];
-
-  const objectUrlArea = arr.reduce((result, obj) => {
-    const url = obj.url;
-    const area = obj.width * obj.height;
-    result[url] = area;
-    return result;
-  }, {});
-
-  for (const key in objectUrlArea) {
-    if (objectUrlArea[key] === maxArea) {
-      return key;
+  return arr.reduce((result, { url, width, height }) => {
+    if (width * height >= result) {
+      result = width * height;
     }
-  }
+    return url;
+  });
 };
 
 console.log(getBiggestArea(boxarts));
@@ -204,9 +194,8 @@ const turnNumbersToString = (arr) => {
   return arr.map((item) => {
     if (typeof item === "number") {
       return String(item);
-    } else if (typeof item === "string") {
-      return Number(item);
     }
+    return Number(item);
   });
 };
 
@@ -223,11 +212,10 @@ console.log(connectArrs([1, 2, 2, 5], [10, 12, 11, 67, 4]));
 // 9
 
 const getValidString = (str, num) => {
-  if (str.length <= num) {
-    return str;
-  } else {
+  if (str.length > num) {
     return `${str.slice(0, num)}...`;
   }
+  return str;
 };
 
-console.log(getValidString("abcdef", 3));
+console.log(getValidString("abcdef", 9));
